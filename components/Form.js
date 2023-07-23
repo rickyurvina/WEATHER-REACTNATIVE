@@ -4,12 +4,13 @@ import {
     View,
     TextInput,
     TouchableWithoutFeedback,
-    Animated
+    Animated,
+    Alert
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Picker } from '@react-native-picker/picker';
 
-const Form = ({ search, setSearch }) => {
+const Form = ({ search, setSearch, setConsult }) => {
 
     const { city, country } = search
 
@@ -34,6 +35,19 @@ const Form = ({ search, setSearch }) => {
         transform: [{ scale: animationBtn }]
     }
 
+    const searchWeather = () => {
+        if (city.trim() === '' || country.trim() === '') {
+            showAlert()
+            return
+        }
+        console.log('Success')
+        setConsult(true)
+    }
+
+    const showAlert = () => {
+        Alert.alert("Error", "All fields are required", [{ text: 'OK' }])
+    }
+
     return (
         <>
             <View style={styles.form}>
@@ -43,11 +57,13 @@ const Form = ({ search, setSearch }) => {
                         placeholderTextColor='#666'
                         style={styles.input}
                         value={city}
+                        onChangeText={city => setSearch({ ...search, city })}
                     />
                 </View>
                 <Picker
                     itemStyle={{ height: 120, backgroundColor: '#fff' }}
                     selectedValue={country}
+                    onValueChange={country => setSearch({ ...search, country })}
                 >
                     <Picker.Item label='Select a country...' value='' />
                     <Picker.Item label='Ecuador' value='EC' />
@@ -61,7 +77,7 @@ const Form = ({ search, setSearch }) => {
             <TouchableWithoutFeedback
                 onPressIn={() => inAnimation()}
                 onPressOut={() => outAnimation()}
-
+                onPress={() => { searchWeather() }}
             >
                 <Animated.View style={[animationStyle, styles.btnSearch]}>
                     <Text style={styles.txtSearch}>Search Weather</Text>
